@@ -1,0 +1,184 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Checkout{% endblock %}
+
+
+{% block content %}
+
+  <div class="grid sm:px-10 lg:grid-cols-2 lg:px-20 xl:px-32 sm:pb-10 lg:pb-20 xl:pb-32">
+    <div class="px-4 pt-8">
+      <p class="text-xl font-medium">Order Summary</p>
+      <p class="text-gray-400">Check your items. And select a suitable shipping method.</p>
+      {% for item in items  %}
+      <div class="mt-8 space-y-3 rounded-lg border bg-white px-2 py-4 sm:px-6">
+        <div class="flex flex-col rounded-lg bg-white sm:flex-row">
+          <img class="m-2 h-24 w-28 rounded-md border object-cover object-center" src="{{item.product.imageURL}}" alt="" />
+          <div class="flex w-full flex-col px-4 py-4">
+            <span class="font-semibold">{{item.product.name}}</span>
+            <span class="float-right text-gray-400">{{item.product.description}}</span>
+            <p class="text-lg font-bold">{{item.get_total|floatformat:2}}</p>
+          </div>
+          <div class="sm:order-1">
+            <div class="mx-auto flex h-8 items-stretch text-gray-600">
+              <div class="flex w-full items-center justify-center bg-gray-100 px-4 text-xs uppercase transition">{{item.quantity}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+  
+      <p class="mt-8 text-lg font-medium">Shipping Methods</p>
+      <div class="mt-5 grid gap-6">
+        <div class="relative">
+          <input class="peer hidden" id="radio_1" type="radio" name="radio" checked />
+          <span class="peer-checked:border-gray-700 absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white"></span>
+          <label class="peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-gray-50 flex cursor-pointer select-none rounded-lg border border-gray-300 p-4" for="radio_1">
+            <img class="w-14 object-contain" src="{% static 'image/delivery.png' %}" alt="" />
+            <div class="ml-5">
+              <span class="mt-2 font-semibold">Tribeni Delivery</span>
+              <p class="text-slate-500 text-sm leading-6">Delivery: 2-4 Days</p>
+            </div>
+          </label>
+        </div>
+       
+      </div>
+    </div>
+    
+      <div class="mt-10 bg-gray-50 px-4 pt-8 lg:mt-0" id="form-wrapper">
+        <p class="text-xl font-medium">Payment Details</p>
+        <p class="text-gray-400">Complete your order by providing your payment details.</p>
+        <form id='form'>
+          {% csrf_token %}
+          <div id="user-info">
+            <label for="email" class="mt-4 mb-2 block text-sm font-medium">User Information</label>
+            <div class="grid gap-6 mb-6 md:grid-cols-2">
+              <div class="form-field">
+                <input required class="form-control mb-6  border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:placeholder-gray-400 dark:text-gray-900 dark:focus:ring-blue-500 dark:focus:border-blue-500" id="name" type="text" autocomplete="off" name="name" placeholder="Name">
+              </div>
+              <div class="form-field">
+                <input required class="form-control mb-6  border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:placeholder-gray-400 dark:text-gray-900 dark:focus:ring-blue-500 dark:focus:border-blue-500" id="email" type="text" autocomplete="off" name="email" placeholder="Email">
+              </div>
+            </div>
+          </div>
+
+          <div id="shippping-info">
+            <label for="address" class="mt-4 mb-2 block text-sm font-medium">Shipping Information</label>
+            <div class="form-field">
+              <input required class="form-control mb-6  border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:placeholder-gray-400 dark:text-gray-900 dark:focus:ring-blue-500 dark:focus:border-blue-500" type="text" autocomplete="off" id="address" name="address" placeholder="Address">
+            </div>
+            <div class="form-field">
+              <input required class="form-control mb-6  border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5   dark:placeholder-gray-400 dark:text-gray-900 dark:focus:ring-blue-500 dark:focus:border-blue-500" type="text" name="city" placeholder="City">
+            </div>
+            <div class="form-field">
+              <input required class="form-control mb-6  border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5   dark:placeholder-gray-400 dark:text-gray-900 dark:focus:ring-blue-500 dark:focus:border-blue-500" type="text" name="state" placeholder="State">
+            </div>
+            <div class="form-field">
+              <input required class="form-control mb-6  border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:placeholder-gray-400 dark:text-gray-900 dark:focus:ring-blue-500 dark:focus:border-blue-500" type="text" name="zipcode" placeholder="Zipcode">
+            </div>
+          </div>
+          
+          <div class="mt-6 border-t border-b py-2">
+            <div class="flex items-center justify-between">
+              <p class="text-sm font-medium text-gray-900">Total</p>
+              <p class="font-semibold text-gray-900">${{order.get_cart_total|floatformat:2}}</p>
+            </div>
+          </div>
+         
+        
+          <div class="mt-6 text-center">
+          <input id="form-button" class=" w-full items-center justify-center rounded-md bg-gray-900 px-6 py-4 text-lg font-semibold text-white transition-all duration-200 ease-in-out focus:shadow hover:bg-gray-800" type="submit" value="Continue">
+          </div>
+        </form>
+      
+       
+      </div>
+      <div class="hidden mt-5 gap-y-6 " id="payment-info">
+        <small>Payment Option</small>
+        <button id="make-payment">Make Payment</button>
+      </div>
+     
+   
+   
+    
+  </div>
+  <script type="text/javascript">
+    var shipping = '{{order.shipping}}';
+    var total = '{{order.get_cart_total|floatformat:2}}';
+    
+    if(shipping == 'False'){
+      document.getElementById('shipping-info').innerHTML = ''
+    }
+    
+    if(user != 'AnonymousUser'){
+      document.getElementById('user-info').innerHTML = ''
+    }
+    
+    if (shipping == 'False' && user != 'AnonymousUser'){
+      document.getElementById('form-wrapper ').classList.add("hidden");
+      document.getElementById('payment-info').classList.remove("hidden");
+    } 
+    
+    var form = document.getElementById('form')
+    crsftoken = form.getElementsByTagName("input")[0].value;
+    console.log('Newtoken:', form.getElementsByTagName("input")[0].value);
+    
+    form.addEventListener('subimt', function(e){
+      e.preventDefault()
+      console.log('Form submitted..')
+      document.getElementById('form-button').classList.add('hidden')
+      document.getElementById('payment-info').classList.remove('hidden')
+      })
+    document.getElementById('form-button').addEventListener('click', function(e)
+    {
+      subimtFormData()
+    })
+    
+    function subimtFormData(){
+      console.log('Payment button clicked')
+    
+      let userFormData = {
+        'name':null,
+        'email':null,
+        'total':total,
+      }
+    
+      let shippingInfo = {
+        'address':null,
+        'city':null,
+        'state':null,
+        'zipcode':null,
+      }
+    
+      if (shipping != 'False'){
+        shippingInfo.address = form.address.value
+        shippingInfo.city = form.address.value
+        shippingInfo.state = form.city.value
+        shippingInfo.zipcode = form.zipcode.value
+      }
+    
+      if (user == 'AnonymousUser'){
+        userFormData.name = form.name.value
+        userFormData.email = form.email.value
+    
+      }
+    
+      var url = '/process_order/'
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type':'application/json',
+          'X-CSRFToken':crsftoken,
+        },
+        body:JSON.stringify({'form':userFormData, 'shipping':shippingInfo})
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Success:', data);
+        alert('Transaction Completed');
+        window.location.href = "{% url 'index' %}"
+      }) 
+    }
+  </script>
+  
+{% endblock %}
